@@ -9,7 +9,7 @@ import { User } from "./user.model";
 import { Role, IsActive } from "../user/user.interface";
 import AppError from "../../errorHelpers/AppError";
 
-import {TransactionModel} from "../transaction/transaction.model";
+import {TransactionModel} from "../travelPlan/travelPlan.model";
 // const createUserFunction = async (req: Response, res: Response) => {
 
 //     const user = await UserServices.createUser(req.body)

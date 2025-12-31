@@ -1,7 +1,7 @@
 import mongoose, { ClientSession } from "mongoose";
 import { WalletModel } from "./wallet.model";
-import { TransactionModel } from "../transaction/transaction.model";
-import { TransactionStatus, TransactionType } from "../transaction/transaction.constant";
+import { TransactionModel } from "../travelPlan/travelPlan.model";
+import { TransactionStatus, TransactionType } from "../travelPlan/travelPlan.constant";
 import { MIN_BALANCE, WalletStatus, TRANSFER_FEE_PERCENT, WITHDRAW_FEE_PERCENT } from "./wallet.constant";
 import AppError from "../../errorHelpers/AppError";
 

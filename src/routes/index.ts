@@ -3,7 +3,7 @@ import { AuthRoutes } from "../modules/auth/auth.route"
 import { UserRoutes } from "../modules/user/user.route"
 
 import { WalletRoutes } from "../modules/wallet/wallet.route"
-import  txRouter from "../modules/transaction/transaction.route"
+import { TravelPlanRoutes } from "../modules/travelPlan/travelPlan.route";
 import { OtpRoutes } from "../modules/otp/otp.route"
 export const router = Router()
 
@@ -21,8 +21,8 @@ const moduleRoutes = [
         route: WalletRoutes
     },
     {
-         path: "/transaction",
-        route: txRouter 
+         path: "/travel-plans",
+        route: TravelPlanRoutes 
     }, {
         path: "/otp",
         route: OtpRoutes
