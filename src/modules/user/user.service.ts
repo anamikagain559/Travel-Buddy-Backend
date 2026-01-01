@@ -8,7 +8,7 @@ import { User } from "./user.model";
 
 const createUser = async (payload: Partial<IUser>) => {
     const { email, password, ...rest } = payload;
-
+console.log("Payload:", payload);
     const isUserExist = await User.findOne({ email })
 
     if (isUserExist) {

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { MIN_TOPUP_AMOUNT, MIN_TRANSFER_AMOUNT, MIN_WITHDRAW_AMOUNT } from "./wallet.constant";
+import { MIN_TOPUP_AMOUNT, MIN_TRANSFER_AMOUNT, MIN_WITHDRAW_AMOUNT } from "./reviews.constant";
 
 export const depositSchema = z.object({
   amount: z

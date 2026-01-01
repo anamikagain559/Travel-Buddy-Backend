@@ -1,8 +1,8 @@
 import mongoose, { ClientSession } from "mongoose";
-import { WalletModel } from "./wallet.model";
+import { WalletModel } from "./reviews.model";
 import { TransactionModel } from "../travelPlan/travelPlan.model";
 import { TransactionStatus, TransactionType } from "../travelPlan/travelPlan.constant";
-import { MIN_BALANCE, WalletStatus, TRANSFER_FEE_PERCENT, WITHDRAW_FEE_PERCENT } from "./wallet.constant";
+import { MIN_BALANCE, WalletStatus, TRANSFER_FEE_PERCENT, WITHDRAW_FEE_PERCENT } from "./reviews.constant";
 import AppError from "../../errorHelpers/AppError";
 
 const ensureActive = (status: WalletStatus) => {

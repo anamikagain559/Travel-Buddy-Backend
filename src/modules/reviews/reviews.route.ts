@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { WalletController } from "./wallet.controller";
+import { WalletController } from "./reviews.controller";
 import { validateRequest } from "../middlewares/validateRequest";
 import { checkAuth } from "../middlewares/checkAuth";
 import {
@@ -8,7 +8,7 @@ import {
   depositSchema,
   transferSchema,
   withdrawSchema
-} from "./wallet.validation";
+} from "./reviews.validation";
 import { Role } from "../user/user.interface";
 
 const router = Router();

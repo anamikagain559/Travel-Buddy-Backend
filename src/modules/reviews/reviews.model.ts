@@ -1,5 +1,5 @@
 import mongoose, { Schema, Types } from "mongoose";
-import { WalletStatus } from "./wallet.constant";
+import { WalletStatus } from "./reviews.constant";
 
 export interface IWallet {
   _id: Types.ObjectId;

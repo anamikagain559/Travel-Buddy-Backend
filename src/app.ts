@@ -23,7 +23,7 @@ app.use(cookieParser())
 app.use(express.json())
 const allowedOrigins = [
   "https://digital-wallet-frontend-rho.vercel.app",
-  "http://localhost:5173",
+  "http://localhost:3000",
 ];
 
 app.use(

@@ -1,5 +1,5 @@
 import { Request as ExRequest, Response } from "express";
-import { WalletService } from "./wallet.service";
+import { WalletService } from "./reviews.service";
 import { JwtPayload } from "jsonwebtoken";
 
 interface AuthRequest extends ExRequest {

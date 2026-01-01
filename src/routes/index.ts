@@ -2,7 +2,7 @@ import { Router } from "express"
 import { AuthRoutes } from "../modules/auth/auth.route"
 import { UserRoutes } from "../modules/user/user.route"
 
-import { WalletRoutes } from "../modules/wallet/wallet.route"
+import { WalletRoutes } from "../modules/reviews/reviews.route"
 import { TravelPlanRoutes } from "../modules/travelPlan/travelPlan.route";
 import { OtpRoutes } from "../modules/otp/otp.route"
 export const router = Router()
