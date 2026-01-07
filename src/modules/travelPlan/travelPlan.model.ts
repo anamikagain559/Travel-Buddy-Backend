@@ -1,7 +1,7 @@
+// src/modules/travelPlan/travelPlan.model.ts
 import { Schema, model } from "mongoose";
-import { ITravelPlan } from "./travelPlan.interface";
 
-const travelPlanSchema = new Schema<ITravelPlan>(
+const travelPlanSchema = new Schema(
   {
     user: {
       type: Schema.Types.ObjectId,
@@ -9,9 +9,8 @@ const travelPlanSchema = new Schema<ITravelPlan>(
       required: true,
     },
     destination: {
-      type: String,
-      required: true,
-      trim: true,
+      country: { type: String, required: true },
+      city: { type: String, required: true },
     },
     startDate: {
       type: Date,
@@ -22,8 +21,8 @@ const travelPlanSchema = new Schema<ITravelPlan>(
       required: true,
     },
     budgetRange: {
-      type: String,
-      required: true,
+      min: { type: Number, required: true },
+      max: { type: Number, required: true },
     },
     travelType: {
       type: String,
@@ -32,18 +31,14 @@ const travelPlanSchema = new Schema<ITravelPlan>(
     },
     description: {
       type: String,
+      maxlength: 500,
     },
-    isActive: {
+    isPublic: {
       type: Boolean,
-      default: true,
+      default: true, // visible for matchmaking
     },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
-export const TravelPlan = model<ITravelPlan>(
-  "TravelPlan",
-  travelPlanSchema
-);
+export const TravelPlan = model("TravelPlan", travelPlanSchema);

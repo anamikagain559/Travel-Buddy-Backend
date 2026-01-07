@@ -8,18 +8,19 @@ const createTravelPlan = async (
   payload: ITravelPlan,
   decodedToken: JwtPayload
 ) => {
-  payload.user = decodedToken.userId;
-
-  const travelPlan = await TravelPlan.create(payload);
-  return travelPlan;
+  return await TravelPlan.create({
+    ...payload,
+    user: decodedToken.userId,
+    isActive: true,
+  });
 };
 
 const getAllTravelPlans = async () => {
-  const plans = await TravelPlan.find({ isActive: true })
+  return await TravelPlan.find({
+    $or: [{ isActive: true }, { isActive: { $exists: false } }],
+  })
     .populate("user", "name email role")
     .sort({ createdAt: -1 });
-
-  return plans;
 };
 
 const getMyTravelPlans = async (decodedToken: JwtPayload) => {

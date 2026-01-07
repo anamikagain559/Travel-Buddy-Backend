@@ -4,6 +4,7 @@ import { UserRoutes } from "../modules/user/user.route"
 
 import { WalletRoutes } from "../modules/reviews/reviews.route"
 import { TravelPlanRoutes } from "../modules/travelPlan/travelPlan.route";
+import {paymentsRoutes} from "../modules/payments/payment.route";
 import { OtpRoutes } from "../modules/otp/otp.route"
 export const router = Router()
 
@@ -28,10 +29,10 @@ const moduleRoutes = [
         route: OtpRoutes
     },
 
-    // {
-    //     path: "/tour",
-    //     route: TourRoutes
-    // },
+    {
+        path: "/payments",
+        route: paymentsRoutes
+    },
 ]
 
 moduleRoutes.forEach((route) => {

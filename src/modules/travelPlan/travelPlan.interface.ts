@@ -1,12 +1,18 @@
-import { Types } from "mongoose";
+export type TravelType = "SOLO" | "FAMILY" | "FRIENDS";
 
 export interface ITravelPlan {
-  user: Types.ObjectId;
-  destination: string;
+  destination: {
+    country: string;
+    city: string;
+  };
   startDate: Date;
   endDate: Date;
-  budgetRange: string;
-  travelType: "SOLO" | "FAMILY" | "FRIENDS";
+  budgetRange: {
+    min: number;
+    max: number;
+  };
+  travelType: TravelType;
   description?: string;
-  isActive: boolean;
+  isPublic?: boolean;
+  user?: string;
 }
