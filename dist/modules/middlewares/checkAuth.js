@@ -13,6 +13,7 @@ const user_interface_1 = require("../user/user.interface");
 const checkAuth = (...authRoles) => async (req, res, next) => {
     try {
         const accessToken = req.headers.authorization || req.cookies.accessToken;
+        console.log(accessToken);
         if (!accessToken) {
             throw new AppError_1.default(403, "No Token Recieved");
         }

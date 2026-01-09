@@ -22,7 +22,7 @@ router.get(
   checkAuth(Role.USER, Role.ADMIN),
   TravelPlanControllers.getMyTravelPlans
 );
-
+router.get("/public", TravelPlanControllers.getPublicTravelPlans); // <-- conflict
 router.get("/:id", TravelPlanControllers.getSingleTravelPlan);
 
 router.patch(

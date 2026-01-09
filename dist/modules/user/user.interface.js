@@ -5,7 +5,6 @@ var Role;
 (function (Role) {
     Role["ADMIN"] = "ADMIN";
     Role["USER"] = "USER";
-    Role["AGENT"] = "AGENT";
 })(Role || (exports.Role = Role = {}));
 var IsActive;
 (function (IsActive) {

@@ -1,37 +1,58 @@
 import { Router } from "express";
 import { checkAuth } from "../../modules/middlewares/checkAuth";
-const router = Router()
-import { UserControllers } from "./user.controller";
 import { validateRequest } from "../middlewares/validateRequest";
+import { UserControllers } from "./user.controller";
 import { createUserZodSchema, updateUserZodSchema } from "./user.validation";
-import { Role } from "../user/user.interface";
+import { Role } from "./user.interface";
 
-router.post("/register",validateRequest(createUserZodSchema), UserControllers.createUser);
-router.get("/all-users", UserControllers.getAllUsers)
-router.get("/me", checkAuth(...Object.values(Role)), UserControllers.getMe)
-router.patch("/:id", validateRequest(updateUserZodSchema), checkAuth(...Object.values(Role)), UserControllers.updateUser)
+const router = Router();
 
-router.patch(
-  "/block-unblock/:id",
- 
-  UserControllers.blockOrUnblockUser 
-);
+/* ================= AUTH & PROFILE ================= */
+
+// Register
 router.post(
-  "/create-agent",validateRequest(createUserZodSchema),checkAuth(Role.ADMIN),
-  UserControllers.createAgent
+  "/register",
+  validateRequest(createUserZodSchema),
+  UserControllers.createUser
 );
+
+// Logged-in user profile
 router.get(
-  "/admin-analytics",
-  UserControllers.getAdminAnalytics
+  "/me",
+  checkAuth(...Object.values(Role)),
+  UserControllers.getMe
 );
-router.post(
-  "/all-users",checkAuth(Role.ADMIN),
+
+// 🔥 MUST be before "/:id"
+router.patch(
+  "/update-my-profile",
+  checkAuth(...Object.values(Role)),
+  validateRequest(updateUserZodSchema),
+  UserControllers.updateMyProfile
+);
+
+/* ================= ADMIN ROUTES ================= */
+
+// Get all users (ADMIN only)
+router.get(
+  "/all-users",
+  checkAuth(Role.ADMIN),
   UserControllers.getAllUsers
 );
-router.patch("/:id", validateRequest(updateUserZodSchema),checkAuth(Role.ADMIN), UserControllers.updateUser);
 
-router.patch("/agent/approve/:id", checkAuth(Role.ADMIN), UserControllers.approveAgent);
+// Block / Unblock user (ADMIN only)
+router.patch(
+  "/block-unblock/:id",
+  checkAuth(Role.ADMIN),
+  UserControllers.blockOrUnblockUser
+);
 
-router.patch("/agent/suspend/:id", checkAuth(Role.ADMIN), UserControllers.suspendAgent);
-router.get("/admin/overview", checkAuth(Role.ADMIN), UserControllers.getAdminAnalytics);
+// Update any user by ID (ADMIN only)
+router.patch(
+  "/:id",
+  checkAuth(...Object.values(Role)),
+  validateRequest(updateUserZodSchema),
+  UserControllers.updateUser
+);
+
 export const UserRoutes = router;

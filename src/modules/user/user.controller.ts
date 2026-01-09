@@ -1,15 +1,13 @@
 
-import { Request, Response,NextFunction  } from "express";
+import { Request, Response  } from "express";
 import httpStatus from "http-status-codes";
 import { JwtPayload } from "jsonwebtoken";
 import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
 import { UserServices } from "./user.service";
 import { User } from "./user.model";
-import { Role, IsActive } from "../user/user.interface";
-import AppError from "../../errorHelpers/AppError";
 
-import {TransactionModel} from "../travelPlan/travelPlan.model";
+
 // const createUserFunction = async (req: Response, res: Response) => {
 
 //     const user = await UserServices.createUser(req.body)
@@ -104,38 +102,7 @@ const getMe = catchAsync(async (req: Request, res: Response) => {
         data: result.data
     })
 })
-const createAgent = async (req: Request, res: Response,next:NextFunction) => {
-  try {
-    const { email, name, password } = req.body;
 
-// if (!req.user || req.user.role !== Role.ADMIN) {
-//   throw new AppError(httpStatus.FORBIDDEN, "You are not allowed to create an agent");
-// }
-console.log("req.user", req.user);
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      throw new AppError(httpStatus.BAD_REQUEST, "User with this email already exists");
-    }
-
-    const agent = await User.create({
-      email,
-      name,
-      password,
-      role: Role.AGENT,
-
-    });
-
-    res.status(httpStatus.CREATED).json({
-      success: true,
-      message: "Agent created successfully",
-      data: agent
-    });
-
-  } catch (error) {
-    next(error);
-  }
-
-};
 
  const blockOrUnblockUser = async (req: Request, res: Response) => {
   try {
@@ -174,152 +141,30 @@ if (isActive === undefined) {
     });
   }
 };
- const getAdminAnalytics = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    // Total users (all users except admin maybe)
-    const totalUsers = await User.countDocuments({ role: "USER" });
-console.log("totalUsers", totalUsers);
-    const totalAgents = await User.countDocuments({ role: "AGENT" });
 
-    // Total transactions count
-    const totalTransactions = await TransactionModel.countDocuments();
 
-    // Total transaction volume
-    const totalVolume = await TransactionModel.aggregate([
-      { $group: { _id: null, sum: { $sum: "$amount" } } },
-    ]);
-
-    // Transactions grouped by date
-    const transactionsOverTime = await TransactionModel.aggregate([
-      {
-        $group: {
-          _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
-          count: { $sum: 1 },
-          volume: { $sum: "$amount" },
-        },
-      },
-      { $sort: { _id: 1 } },
-    ]);
-
-    res.json({
-      success: true,
-      data: {
-        totalUsers,
-        totalAgents,
-        totalTransactions,
-        totalVolume: totalVolume[0]?.sum || 0,
-        transactionsOverTime,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-const approveAgent = catchAsync(async (req: Request, res: Response) => {
-  const { id } = req.params;
-
-  if (!id) {
-    throw new AppError(httpStatus.BAD_REQUEST, "Agent ID is required");
-  }
-
-  const agent = await User.findById(id);
-
-  if (!agent) {
-    throw new AppError(httpStatus.NOT_FOUND, "Agent not found");
-  }
-
-  if (agent.role !== Role.AGENT) {
-    throw new AppError(httpStatus.BAD_REQUEST, "This user is not an agent");
-  }
-
-  // Approve agent
-  agent.isVerified = true;
-  agent.isActive = IsActive.ACTIVE; // Optional but recommended
-  await agent.save();
+const updateMyProfile = catchAsync(async (req: Request, res: Response) => {
+  console.log("Request body received at backend:", req.body); // 🔥
+  const user = req.user as JwtPayload;
+  const payload = req.body;
+  const result = await UserServices.updateMyProfile(user.userId, payload);
 
   sendResponse(res, {
-    success: true,
     statusCode: httpStatus.OK,
-    message: "Agent approved successfully",
-    data: agent,
+    success: true,
+    message: "Profile updated successfully",
+    data: result,
   });
 });
 
-const suspendAgent = catchAsync(async (req: Request, res: Response) => {
-  const { id } = req.params;
-
-  if (!id) {
-    throw new AppError(httpStatus.BAD_REQUEST, "Agent ID is required");
-  }
-
-  const agent = await User.findById(id);
-
-  if (!agent) {
-    throw new AppError(httpStatus.NOT_FOUND, "Agent not found");
-  }
-
-  if (agent.role !== Role.AGENT) {
-    throw new AppError(httpStatus.BAD_REQUEST, "This user is not an agent");
-  }
-
-  // Suspend agent
-   agent.isVerified = false;
-  agent.isActive = IsActive.INACTIVE;
-  await agent.save();
-
-  sendResponse(res, {
-    success: true,
-    statusCode: httpStatus.OK,
-    message: "Agent suspended successfully",
-    data: agent,
-  });
-});
-const getAdminOverview = async (req: Request, res: Response) => {
-  try {
-    // Count normal users
-    const totalUsers = await User.countDocuments({ role: "user" });
-
-    // Count agents
-    const totalAgents = await User.countDocuments({ role: "agent" });
-
-    // Count transactions
-    const totalTransactions = await TransactionModel.countDocuments();
-
-    // Sum transaction amounts
-    const volumeAgg = await TransactionModel.aggregate([
-      { $group: { _id: null, totalAmount: { $sum: "$amount" } } },
-    ]);
-
-    const totalVolume = volumeAgg[0]?.totalAmount || 0;
-
-    return res.status(200).json({
-      success: true,
-      data: {
-        totalUsers,
-        totalAgents,
-        totalTransactions,
-        totalVolume,
-      },
-    });
-  } catch (error: any) {
-    console.error(error);
-    return res.status(500).json({
-      success: false,
-      message: "Something went wrong",
-    });
-  }
-};
 
 export const UserControllers = {
     createUser,
     getAllUsers,
     updateUser,
-    createAgent,
     getMe,
-    getAdminAnalytics ,
+   updateMyProfile,
     blockOrUnblockUser,
-    approveAgent,
-    suspendAgent,
-    getAdminOverview
+ 
 
 }

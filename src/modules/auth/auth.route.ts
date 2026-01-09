@@ -12,7 +12,7 @@ router.post("/logout", AuthControllers.logout)
 router.post("/reset-password", checkAuth(...Object.values(Role)), AuthControllers.resetPassword)
 router.put(
   "/update-profile",
-  checkAuth(Role.USER, Role.AGENT, Role.ADMIN),
+  checkAuth(Role.USER,  Role.ADMIN),
   AuthControllers.updateProfile
 );
 router.post("/change-password", checkAuth(...Object.values(Role)), AuthControllers.changePassword)

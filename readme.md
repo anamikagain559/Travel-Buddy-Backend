@@ -1,148 +1,244 @@
-# 💳 Digital Wallet API (MFS Project)
+# 🧳 Travel Buddy & Meetup Platform
 
-A **secure, modular, role-based backend API** for a digital wallet system (like Bkash or Nagad) built with **Node.js, Express.js, and MongoDB**. Users can register, manage wallets, and perform financial operations like add money, withdraw, and send money.
-
----
-
-## 🎯 Project Overview
-
-- JWT-based login system with **three roles**: admin, user, agent
-- Secure password hashing (bcrypt)
-- Automatic wallet creation for each user and agent (initial balance: ৳50)
-- Role-based access control
-- Full transaction tracking and wallet management
-
-### Features per Role
-
-**Users:**
-
-- Add money (top-up)
-- Withdraw money
-- Send money to other users
-- View transaction history
-
-**Agents:**
-
-- Add money to any user's wallet (cash-in)
-- Withdraw money from any user's wallet (cash-out)
-- View commission history (optional)
-
-**Admins:**
-
-- View all users, agents, wallets, and transactions
-- Block/unblock wallets
-- Approve/suspend agents
-- Set system parameters (optional)
+A full-stack social travel platform that helps travelers find compatible travel buddies, plan trips together, and build meaningful connections. The platform blends **social networking**, **travel planning**, and **subscription-based premium features** to turn solo trips into shared adventures.
 
 ---
 
-## 🧠 Design Considerations
-
-- **Wallet Management:** Automatically during registration; blocked wallets cannot perform operations.
-- **Transaction Management:** Tracks type, amount, fee, commission, initiator, status (pending → completed → reversed), atomic operations.
-- **Role Representation:** Single User model with `role` field.
-- **Validations & Business Rules:** Insufficient balance, blocked wallets, negative amounts, and non-existent receivers.
-- **API Design:** RESTful endpoints like `/wallets/deposit`, `/transactions/me`, `/wallets/block/:id`.
+## 🌍 Live URLs
+- **Frontend Live URL:** _[(https://travel-buddy-azure.vercel.app)]_  
+- **Backend Live URL:** _[(https://travel-buddy-backend-kappa.vercel.app)]_
 
 ---
 
-## 📁 Suggested Project Structure
+## 📌 Project Overview
+**Travel Buddy & Meetup** aims to create a vibrant community of travelers by enabling users to:
+- Share upcoming travel plans
+- Discover travelers going to similar destinations
+- Match based on interests, dates, and travel type
+- Review and rate travel companions after trips
 
+This platform empowers users to explore the world **together**, not alone.
+
+---
+
+## 🎯 Objectives
+- Build a social-travel web platform for connecting travelers
+- Enable trip sharing and traveler matching
+- Allow users to create detailed travel profiles and itineraries
+- Provide a secure and engaging UI/UX
+- Implement role-based authentication and data persistence
+
+---
+
+## ✨ Core Features
+
+### 🔐 Authentication & Roles
+- Email & Password based authentication
+- JWT-based authorization
+- Secure password hashing
+- **Roles:**
+  - **User:** Create travel plans, match with others, review travelers
+  - **Admin:** Manage users, travel plans, and platform content
+
+---
+
+### 👤 User Profile Management (CRUD)
+- Full Name
+- Profile Image (Cloudinary / ImgBB)
+- Bio / About section
+- Travel Interests (hiking, food tours, photography, etc.)
+- Visited Countries
+- Current Location
+- Public profile view for other users
+
+---
+
+### 🧳 Travel Plan Management (CRUD)
+- Destination (Country / City)
+- Start Date & End Date
+- Budget Range
+- Travel Type (Solo, Family, Friends)
+- Short itinerary / description
+- Plans are publicly visible for discovery and matching
+
+---
+
+### 🔍 Search & Matching System
+- Search by destination
+- Filter by date range
+- Match by travel interests
+- View compatible traveler profiles
+
+---
+
+### ⭐ Review & Rating System
+- Post-trip reviews between travelers
+- Rating system (1–5 stars)
+- Edit or delete reviews
+- Average rating displayed on user profiles
+
+---
+
+### 💳 Payment & Subscription
+- Monthly & Yearly subscription plans
+- Verified badge for premium users
+- Payment gateway integration:
+  - Stripe / SSLCommerz / others
+
+---
+
+## 🧭 Pages & Functional Requirements
+
+### 🧩 Navbar
+**Logged Out:**
+- Home
+- Explore Travelers
+- Find Travel Buddy
+- Login
+- Register
+
+**Logged In (User):**
+- Home
+- Explore Travelers
+- My Travel Plans
+- Profile
+- Logout
+
+**Logged In (Admin):**
+- Home
+- Admin Dashboard
+- Manage Users
+- Manage Travel Plans
+- Profile
+- Logout
+
+---
+
+### 🏠 Home Page (/)
+Minimum **6 sections**, including:
+- Hero section with CTA
+- How It Works (3 steps)
+- Popular Destinations
+- Top-Rated Travelers
+- Testimonials
+- Why Choose Us
+
+---
+
+### 📄 Other Pages
+- **/register** – User registration
+- **/login** – Secure login
+- **/profile/[id]** – User profile & reviews
+- **/dashboard** – User/Admin dashboard
+- **/travel-plans** – List of user travel plans
+- **/travel-plans/add** – Create new travel plan
+- **/travel-plans/[id]** – Travel plan details & join request
+- **/explore** – Search & match travelers
+
+---
+
+## 🚀 Optional Features
+| Feature | Description |
+|------|------------|
+| 📍 Map Integration | Show nearby travelers using Google Maps API |
+| 📨 Notifications | In-app or push notifications |
+| 📸 Media Sharing | Share travel photos |
+
+---
+
+## 🗂 Folder Structure
+
+### Frontend
 ```
-src/
-├── modules/
-│   ├── auth/
-│   ├── user/
-│   ├── wallet/
-│   └── transaction/
-├── middlewares/
-├── config/
-├── utils/
-├── app.ts
+frontend/
+ ├── app/
+ │   ├── (auth)/login, register
+ │   ├── (user)/profile, travel-plans
+ │   ├── components/
+ │   ├── utils/
+ │   └── styles/
+```
+
+### Backend
+```
+backend/
+ ├── src/
+ │   ├── modules/
+ │   │   ├── users/
+ │   │   ├── travelPlans/
+ │   │   ├── reviews/
+ │   │   ├── payments/
+ │   └── ...
 ```
 
 ---
 
-## ⚙️ Installation & Setup
+## 🌐 API Endpoints
 
-1. Clone the repository
-   ```bash
-   git clone https://github.com/your-username/wallet-api.git
-   cd wallet-api
-   ```
-2. Install dependencies
-   ```bash
-   npm install
-   ```
-3. Create a `.env` file
-   ```env
-   PORT=5000
-   DB_URL=mongodb://127.0.0.1:27017/walletDB
-   JWT_SECRET=yourSecretKey
-   ```
-4. Run the server
-   ```bash
-   npm run dev
-   ```
+| Method | Endpoint | Description |
+|------|---------|-------------|
+| POST | /api/auth/register | Register new user |
+| POST | /api/auth/login | Login user |
+| GET | /api/users/:id | Get user profile |
+| PATCH | /api/users/:id | Update user profile |
+| POST | /api/travel-plans | Create travel plan |
+| GET | /api/travel-plans | Get all travel plans |
+| GET | /api/travel-plans/match | Search & match travelers |
+| POST | /api/reviews | Add review |
+| POST | /api/payments/create-intent | Create payment intent |
 
 ---
 
-## 🔗 API Endpoints
+## 🛠 Technology Stack
 
-### Wallet
+### Frontend
+- Next.js
+- Tailwind CSS
 
-| Method | Endpoint                           | Description        |
-| ------ | ---------------------------------- | ------------------ |
-| POST   | `/api/v1/wallet`                   | Create a wallet    |
-| GET    | `/api/v1/wallet/:userId`           | Get wallet details |
-| PATCH  | `/api/v1/wallet/block/:walletId`   | Block a wallet     |
-| PATCH  | `/api/v1/wallet/unblock/:walletId` | Unblock a wallet   |
-| GET    | `/api/v1/wallet/balance/:walletId` | Get wallet balance |
+### Backend
+- Node.js
+- Express.js
+- Prisma / Mongoose
 
-### Transfer
+### Database
+- PostgreSQL / MongoDB
 
-| Method | Endpoint                  | Body                                         |
-| ------ | ------------------------- | -------------------------------------------- |
-| POST   | `/api/v1/wallet/transfer` | `{ "toUserId": "userId123", "amount": 500 }` |
+### Authentication
+- JWT (JSON Web Token)
+
+### Payments
+- SSLCommerz / Stripe
+
+### Deployment
+- Frontend: Vercel
+- Backend: Render / Railway
 
 ---
 
-## 📌 Example Transfer Request
+## 📦 Installation & Setup (Optional)
+```bash
+# Frontend
+cd frontend
+npm install
+npm run dev
 
-```http
-POST /api/v1/wallet/transfer
-Content-Type: application/json
-
-{
-  "toUserId": "79b3ce7807bb9c6d382125ab",
-  "amount": 500
-}
+# Backend
+cd backend
+npm install
+npm run dev
 ```
 
 ---
 
-## 🧪 Testing & Documentation
-
-- Use **Postman** to test all endpoints
-- Create a **screen-recorded demo (5–10 mins)** showing:
-  - Intro (name + project title)
-  - Folder structure
-  - Auth flow (register, login, JWT + roles)
-  - User features (deposit, withdraw, send, history)
-  - Agent features (cash-in, cash-out, commission)
-  - Admin features (view users, block/unblock wallets, approve agents)
-  - API testing in Postman
+## 🤝 Contribution
+Contributions, issues, and feature requests are welcome.
 
 ---
 
-## 🌐 Live & Repository Links
-
-- Live Demo: [https://wallet-api-live.example.com](https://wallet-api-live.example.com)
-- GitHub Repository: [https://github.com/anamikagain559/digital-wallet-api.git](https://github.com/anamikagain559/digital-wallet-api.git)
+## 📜 License
+This project is developed for educational and portfolio purposes.
 
 ---
 
-## 👨‍💻 Author
-
-Developed by **Anamika Gain**
+✨ *Travel together. Explore more. Connect globally.*
 

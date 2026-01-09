@@ -1,24 +1,39 @@
-import mongoose, { Schema, Types } from "mongoose";
-import { WalletStatus } from "./reviews.constant";
+import { Schema, model, Types } from "mongoose";
 
-export interface IWallet {
-  _id: Types.ObjectId;
-  user: Types.ObjectId; // ref: User
-  balance: number;
-  status: WalletStatus;
-  currency: "BDT" | "USD"; // keep simple; default BDT
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-const walletSchema = new Schema<IWallet>(
+const reviewSchema = new Schema(
   {
-    user: { type: Schema.Types.ObjectId, ref: "User", required: true, unique: true },
-    balance: { type: Number, required: true, default: 50 },
-    status: { type: String, enum: Object.values(WalletStatus), default: WalletStatus.ACTIVE },
-    currency: { type: String, enum: ["BDT", "USD"], default: "BDT" },
+    reviewer: {
+      type: Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    reviewee: {
+      type: Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    travelPlan: {
+      type: Types.ObjectId,
+      ref: "TravelPlan",
+      required: true,
+    },
+    rating: {
+      type: Number,
+      min: 1,
+      max: 5,
+      required: true,
+    },
+    comment: {
+      type: String,
+      trim: true,
+    },
   },
   { timestamps: true }
 );
 
-export const WalletModel = mongoose.model<IWallet>("Wallet", walletSchema);
+reviewSchema.index(
+  { reviewer: 1, travelPlan: 1 },
+  { unique: true }
+);
+
+export const Review = model("Review", reviewSchema);

@@ -2,7 +2,7 @@ import { Router } from "express"
 import { AuthRoutes } from "../modules/auth/auth.route"
 import { UserRoutes } from "../modules/user/user.route"
 
-import { WalletRoutes } from "../modules/reviews/reviews.route"
+import { reviewsRoutes } from "../modules/reviews/reviews.route"
 import { TravelPlanRoutes } from "../modules/travelPlan/travelPlan.route";
 import {paymentsRoutes} from "../modules/payments/payment.route";
 import { OtpRoutes } from "../modules/otp/otp.route"
@@ -18,10 +18,6 @@ const moduleRoutes = [
         route: AuthRoutes
     },
     {
-        path: "/wallet",
-        route: WalletRoutes
-    },
-    {
          path: "/travel-plans",
         route: TravelPlanRoutes 
     }, {
@@ -32,6 +28,10 @@ const moduleRoutes = [
     {
         path: "/payments",
         route: paymentsRoutes
+    },
+        {
+        path: "/reviews",
+        route: reviewsRoutes
     },
 ]
 

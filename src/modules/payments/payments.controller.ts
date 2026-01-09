@@ -14,23 +14,26 @@ if (!process.env.STRIPE_SECRET_KEY) {
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const createPaymentIntent = catchAsync(async (req: Request, res: Response) => {
   const decodedToken = req.user as JwtPayload;
-  const { price, plan } = req.body;
+  const {  plan } = req.body;
 
-  if (!price || price <= 0) {
+let amount = 0;
+
+  if (plan === "MONTHLY") amount = 10;
+  if (plan === "YEARLY") amount = 100;
+
+  if (amount <= 0) {
     return sendResponse(res, {
+      statusCode: 400,
       success: false,
-      statusCode: httpStatus.BAD_REQUEST,
-      message: "Price must be greater than 0",
+      message: "Invalid plan selected",
       data: null,
     });
   }
 
-  // Stripe requires amount in cents
-  const amount = Math.round(price * 100);
 
   const paymentIntent = await stripe.paymentIntents.create({
-    amount,
-    currency: "usd",
+    amount: amount * 100, // Stripe uses cents
+    currency: "inr",
     payment_method_types: ["card"],
     metadata: {
       userId: decodedToken.userId,
