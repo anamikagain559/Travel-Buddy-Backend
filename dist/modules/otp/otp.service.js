@@ -17,9 +17,9 @@ const generateOtp = (length = 6) => {
     return otp;
 };
 const sendOTP = async (email, name) => {
-    console.log(email, name);
+    // console.log(email, name);
     const user = await user_model_1.User.findOne({ email });
-    console.log(user);
+    // console.log(user);
     if (!user) {
         throw new AppError_1.default(404, "User not found");
     }

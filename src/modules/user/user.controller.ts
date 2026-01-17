@@ -37,7 +37,7 @@ const createUser = catchAsync(async (req: Request, res: Response) => {
     //     message: "User Created Successfully",
     //     user
     // })
-console.log("Register response:", user);
+
     sendResponse(res, {
         success: true,
         statusCode: httpStatus.CREATED,
@@ -47,19 +47,18 @@ console.log("Register response:", user);
 })
 const updateUser = catchAsync(async (req: Request, res: Response) => {
     const userId = req.params.id;
-    console.log("userId in controller:", userId);
+
     if (!userId) {
         throw new Error("User ID is required");
     }
 
-    console.log("req.user in controller:", req.user);
     // const token = req.headers.authorization
     // const verifiedToken = verifyToken(token as string, envVars.JWT_ACCESS_SECRET) as JwtPayload
 
     const verifiedToken = req.user;
 
     const payload = req.body;
-    console.log("Payload in controller:", payload);
+
     const user = await UserServices.updateUser(userId, payload, verifiedToken as JwtPayload)
 
     // res.status(httpStatus.CREATED).json({
@@ -108,7 +107,7 @@ const getMe = catchAsync(async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 const { isActive } = req.body || {};
-console.log("isActive", isActive);
+
 if (isActive === undefined) {
   return res.status(400).json({
     success: false,
@@ -144,7 +143,7 @@ if (isActive === undefined) {
 
 
 const updateMyProfile = catchAsync(async (req: Request, res: Response) => {
-  console.log("Request body received at backend:", req.body); // 🔥
+
   const user = req.user as JwtPayload;
   const payload = req.body;
   const result = await UserServices.updateMyProfile(user.userId, payload);

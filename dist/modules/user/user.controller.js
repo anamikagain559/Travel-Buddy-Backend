@@ -43,16 +43,16 @@ const createUser = (0, catchAsync_1.catchAsync)(async (req, res) => {
 });
 const updateUser = (0, catchAsync_1.catchAsync)(async (req, res) => {
     const userId = req.params.id;
-    console.log("userId in controller:", userId);
+  
     if (!userId) {
         throw new Error("User ID is required");
     }
-    console.log("req.user in controller:", req.user);
+ 
     // const token = req.headers.authorization
     // const verifiedToken = verifyToken(token as string, envVars.JWT_ACCESS_SECRET) as JwtPayload
     const verifiedToken = req.user;
     const payload = req.body;
-    console.log("Payload in controller:", payload);
+ 
     const user = await user_service_1.UserServices.updateUser(userId, payload, verifiedToken);
     // res.status(httpStatus.CREATED).json({
     //     message: "User Created Successfully",

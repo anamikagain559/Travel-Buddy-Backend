@@ -11,7 +11,7 @@ export const checkAuth = (...authRoles: string[]) => async (req: Request, res: R
 
     try {
          const accessToken = req.headers.authorization||req.cookies.accessToken;
-console.log(accessToken);
+
         if (!accessToken) {
             throw new AppError(403, "No Token Recieved")
         }
@@ -29,8 +29,7 @@ console.log(accessToken);
             throw new AppError(httpStatus.BAD_REQUEST, "User is deleted")
         }
 
-        console.log("verifiedToken", verifiedToken);
-        console.log(authRoles);
+    
         if (!authRoles.includes(verifiedToken.role)) {
             throw new AppError(403, "You are not permitted to view this route!!!")
         }
@@ -38,7 +37,7 @@ console.log(accessToken);
         next()
 
     } catch (error) {
-        console.log("jwt error", error);
+      
         next(error)
     }
 }

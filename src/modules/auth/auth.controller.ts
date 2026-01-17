@@ -137,12 +137,13 @@ const googleCallbackController = catchAsync(async (req: Request, res: Response, 
     res.redirect(`${envVars.FRONTEND_URL}/${redirectTo}`)
 })
 export const updateProfile = catchAsync(async (req: Request, res: Response) => {
+  
     const userId = (req.user as any)?._id;
 
     if (!userId) {
         throw new AppError(httpStatus.UNAUTHORIZED, "User not authenticated");
     }
-
+console.log("updateprofile called", req.body);
     const updateData = req.body;
 
     const updatedUser = await (AuthServices as any).updateProfile(userId, updateData);
