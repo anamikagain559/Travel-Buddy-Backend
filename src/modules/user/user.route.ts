@@ -36,7 +36,7 @@ router.patch(
 // Get all users (ADMIN only)
 router.get(
   "/all-users",
-  checkAuth(Role.ADMIN),
+  checkAuth(Role.ADMIN,Role.USER),
   UserControllers.getAllUsers
 );
 
@@ -54,5 +54,5 @@ router.patch(
   validateRequest(updateUserZodSchema),
   UserControllers.updateUser
 );
-
+router.get("/:id", checkAuth(Role.USER, Role.ADMIN), UserControllers.getUserById);
 export const UserRoutes = router;

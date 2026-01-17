@@ -64,7 +64,13 @@ const deleteTravelPlan = (0, catchAsync_1.catchAsync)(async (req, res) => {
     });
 });
 const matchTravelPlans = (0, catchAsync_1.catchAsync)(async (req, res) => {
-    const result = await travelPlan_service_1.TravelPlanServices.matchTravelPlans(req.query, req.user);
+    const query = {
+        destination: req.query.destination?.toString(),
+        startDate: req.query.startDate?.toString(),
+        endDate: req.query.endDate?.toString(),
+        travelType: req.query.travelType?.toString(),
+    };
+    const result = await travelPlan_service_1.TravelPlanServices.matchTravelPlans(query, req.user);
     (0, sendResponse_1.sendResponse)(res, {
         success: true,
         statusCode: http_status_codes_1.default.OK,

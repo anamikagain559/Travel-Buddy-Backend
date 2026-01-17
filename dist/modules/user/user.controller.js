@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserControllers = void 0;
+const mongoose_1 = __importDefault(require("mongoose"));
 const http_status_codes_1 = __importDefault(require("http-status-codes"));
 const catchAsync_1 = require("../../utils/catchAsync");
 const sendResponse_1 = require("../../utils/sendResponse");
@@ -133,11 +134,45 @@ const updateMyProfile = (0, catchAsync_1.catchAsync)(async (req, res) => {
         data: result,
     });
 });
+const getUserById = (0, catchAsync_1.catchAsync)(async (req, res) => {
+    const { id } = req.params; // use 'id' instead of '_id'
+    if (!id) {
+        return (0, sendResponse_1.sendResponse)(res, {
+            success: false,
+            statusCode: http_status_codes_1.default.BAD_REQUEST,
+            message: "User ID is required",
+            data: null,
+        });
+    }
+    if (!mongoose_1.default.Types.ObjectId.isValid(id)) {
+        return (0, sendResponse_1.sendResponse)(res, {
+            success: false,
+            statusCode: http_status_codes_1.default.BAD_REQUEST,
+            message: "Invalid User ID",
+            data: null,
+        });
+    }
+    const user = await user_model_1.User.findById(id).lean(); // lean() returns plain JS object
+    if (!user) {
+        return (0, sendResponse_1.sendResponse)(res, {
+            success: false,
+            statusCode: http_status_codes_1.default.NOT_FOUND,
+            message: "User not found",
+            data: null,
+        });
+    }
+    return (0, sendResponse_1.sendResponse)(res, {
+        success: true,
+        statusCode: http_status_codes_1.default.OK,
+        message: "User retrieved successfully",
+        data: { ...user, id: user._id.toString() }, // frontend-friendly id
+    });
+});
 exports.UserControllers = {
     createUser,
     getAllUsers,
     updateUser,
-    getMe,
+    getMe, getUserById,
     updateMyProfile,
     blockOrUnblockUser,
 };

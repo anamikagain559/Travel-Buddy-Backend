@@ -1,4 +1,4 @@
-
+import mongoose from "mongoose"; 
 import { Request, Response  } from "express";
 import httpStatus from "http-status-codes";
 import { JwtPayload } from "jsonwebtoken";
@@ -157,12 +157,49 @@ const updateMyProfile = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+ const getUserById = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params; // use 'id' instead of '_id'
 
+  if (!id) {
+    return sendResponse(res, {
+      success: false,
+      statusCode: httpStatus.BAD_REQUEST,
+      message: "User ID is required",
+      data: null,
+    });
+  }
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return sendResponse(res, {
+      success: false,
+      statusCode: httpStatus.BAD_REQUEST,
+      message: "Invalid User ID",
+      data: null,
+    });
+  }
+
+  const user = await User.findById(id).lean(); // lean() returns plain JS object
+  if (!user) {
+    return sendResponse(res, {
+      success: false,
+      statusCode: httpStatus.NOT_FOUND,
+      message: "User not found",
+      data: null,
+    });
+  }
+
+  return sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "User retrieved successfully",
+    data: { ...user, id: user._id.toString() }, // frontend-friendly id
+  });
+});
 export const UserControllers = {
     createUser,
     getAllUsers,
     updateUser,
-    getMe,
+    getMe,getUserById,
    updateMyProfile,
     blockOrUnblockUser,
  

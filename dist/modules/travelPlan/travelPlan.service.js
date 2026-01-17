@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TravelPlanServices = void 0;
+exports.TravelPlanServices = exports.matchTravelPlans = void 0;
 const AppError_1 = __importDefault(require("../../errorHelpers/AppError"));
 const http_status_codes_1 = __importDefault(require("http-status-codes"));
 const travelPlan_model_1 = require("./travelPlan.model");
@@ -53,23 +53,40 @@ const deleteTravelPlan = async (id, decodedToken) => {
     await travelPlan_model_1.TravelPlan.findByIdAndDelete(id);
     return null;
 };
-const matchTravelPlans = async (query, decodedToken) => {
+const matchTravelPlans = async (query, decoded) => {
     const { destination, startDate, endDate, travelType } = query;
-    const filter = {
-        destination,
-        isActive: true,
-        user: { $ne: decodedToken.userId }, // ❗ exclude own plans
-        startDate: { $lte: new Date(endDate) },
-        endDate: { $gte: new Date(startDate) },
-    };
-    if (travelType) {
-        filter.travelType = travelType;
+    const orConditions = [];
+    // Match destination city/country if provided
+    if (destination) {
+        orConditions.push({ "destination.city": { $regex: destination, $options: "i" } }, { "destination.country": { $regex: destination, $options: "i" } });
     }
-    const matches = await travelPlan_model_1.TravelPlan.find(filter)
-        .populate("user", "name email role image bio")
+    // Match any overlap with date range
+    if (startDate && endDate) {
+        orConditions.push({
+            startDate: { $lte: new Date(endDate) },
+            endDate: { $gte: new Date(startDate) },
+        });
+    }
+    // Match travel type
+    if (travelType) {
+        orConditions.push({
+            travelType: { $regex: `^${travelType}$`, $options: "i" },
+        });
+    }
+    // ✅ Final filter
+    const filter = {
+        isActive: true,
+        user: { $ne: decoded.userId }, // exclude own plans
+    };
+    if (orConditions.length > 0) {
+        filter.$or = orConditions;
+    }
+    console.log("FINAL MATCH FILTER 👉", filter);
+    return travelPlan_model_1.TravelPlan.find(filter)
+        .populate("user", "name email image bio")
         .sort({ startDate: 1 });
-    return matches;
 };
+exports.matchTravelPlans = matchTravelPlans;
 exports.TravelPlanServices = {
     createTravelPlan,
     getAllTravelPlans,
@@ -77,5 +94,5 @@ exports.TravelPlanServices = {
     getSingleTravelPlan,
     updateTravelPlan,
     deleteTravelPlan,
-    matchTravelPlans,
+    matchTravelPlans: exports.matchTravelPlans,
 };

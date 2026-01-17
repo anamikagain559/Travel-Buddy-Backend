@@ -83,8 +83,15 @@ const deleteTravelPlan = catchAsync(async (req, res) => {
   });
 });
 const matchTravelPlans = catchAsync(async (req, res) => {
+  const query = {
+    destination: req.query.destination?.toString(),
+    startDate: req.query.startDate?.toString(),
+    endDate: req.query.endDate?.toString(),
+    travelType: req.query.travelType?.toString(),
+  };
+
   const result = await TravelPlanServices.matchTravelPlans(
-    req.query,
+    query,
     req.user as JwtPayload
   );
 
@@ -95,6 +102,7 @@ const matchTravelPlans = catchAsync(async (req, res) => {
     data: result,
   });
 });
+
 const getPublicTravelPlans = catchAsync(async (req: Request, res: Response) => {
   const { country, city, startDate, endDate, travelType } = req.query;
 
