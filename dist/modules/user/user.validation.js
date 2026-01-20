@@ -19,6 +19,7 @@ exports.createUserZodSchema = zod_1.default.object({
     travelInterests: zod_1.default.array(zod_1.default.string()).optional(),
     visitedCountries: zod_1.default.array(zod_1.default.string()).optional(),
     currentLocation: zod_1.default.string().optional(),
+    picture: zod_1.default.string().url().optional(), // ✅ added profile image field
 });
 exports.updateUserZodSchema = zod_1.default.object({
     name: zod_1.default.string().min(2).max(50).optional(),
@@ -37,4 +38,5 @@ exports.updateUserZodSchema = zod_1.default.object({
     travelInterests: zod_1.default.array(zod_1.default.string()).optional(),
     visitedCountries: zod_1.default.array(zod_1.default.string()).optional(),
     currentLocation: zod_1.default.string().optional(),
+    picture: zod_1.default.string().url().optional(), // ✅ new field added
 });

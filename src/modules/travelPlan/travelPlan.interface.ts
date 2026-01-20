@@ -15,4 +15,5 @@ export interface ITravelPlan {
   description?: string;
   isPublic?: boolean;
   user?: string;
+  image?: string; // ✅ new field
 }

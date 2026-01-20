@@ -64,14 +64,18 @@ const deleteTravelPlan = (0, catchAsync_1.catchAsync)(async (req, res) => {
     });
 });
 const matchTravelPlans = (0, catchAsync_1.catchAsync)(async (req, res) => {
+    // Build query from URL params
     const query = {
         destination: req.query.destination?.toString(),
         startDate: req.query.startDate?.toString(),
         endDate: req.query.endDate?.toString(),
         travelType: req.query.travelType?.toString(),
     };
-    const result = await travelPlan_service_1.TravelPlanServices.matchTravelPlans(query, req.user);
-    (0, sendResponse_1.sendResponse)(res, {
+    // Call service method
+    const result = await travelPlan_service_1.TravelPlanServices.matchTravelPlans(query, req.user // make sure req.user is populated by your auth middleware
+    );
+    // Return JSON response
+    return (0, sendResponse_1.sendResponse)(res, {
         success: true,
         statusCode: http_status_codes_1.default.OK,
         message: "Matching travel plans retrieved successfully",

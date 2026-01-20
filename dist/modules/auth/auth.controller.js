@@ -110,6 +110,7 @@ exports.updateProfile = (0, catchAsync_1.catchAsync)(async (req, res) => {
     if (!userId) {
         throw new AppError_1.default(http_status_codes_1.default.UNAUTHORIZED, "User not authenticated");
     }
+    console.log("updateprofile called", req.body);
     const updateData = req.body;
     const updatedUser = await auth_service_1.AuthServices.updateProfile(userId, updateData);
     if (!updatedUser) {

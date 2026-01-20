@@ -69,7 +69,7 @@ const updateTravelPlan = async (
 
 const deleteTravelPlan = async (
   id: string,
-  decodedToken: JwtPayload
+  decodedToken: JwtPayload & { userId: string; role: string } // make sure role is included
 ) => {
   const plan = await TravelPlan.findById(id);
 
@@ -77,7 +77,8 @@ const deleteTravelPlan = async (
     throw new AppError(httpStatus.NOT_FOUND, "Travel plan not found");
   }
 
-  if (plan.user.toString() !== decodedToken.userId) {
+  // Admin can delete any plan
+  if (decodedToken.role !== "ADMIN" && plan.user.toString() !== decodedToken.userId) {
     throw new AppError(
       httpStatus.FORBIDDEN,
       "You can delete only your own travel plan"
@@ -88,22 +89,30 @@ const deleteTravelPlan = async (
   return null;
 };
 
-export const matchTravelPlans = async (query: any, decoded: JwtPayload) => {
+
+ const matchTravelPlans = async (query: any, decoded: JwtPayload) => {
   const { destination, startDate, endDate, travelType } = query;
 
-  const orConditions: any[] = [];
+  const filter: any = {
+    isActive: true,
+    user: { $ne: decoded.userId }, // exclude own plans
+  };
 
-  // Match destination city/country if provided
+  const andConditions: any[] = [filter];
+
+  // Match destination city or country
   if (destination) {
-    orConditions.push(
-      { "destination.city": { $regex: destination, $options: "i" } },
-      { "destination.country": { $regex: destination, $options: "i" } }
-    );
+    andConditions.push({
+      $or: [
+        { "destination.city": { $regex: destination, $options: "i" } },
+        { "destination.country": { $regex: destination, $options: "i" } },
+      ],
+    });
   }
 
-  // Match any overlap with date range
+  // Match date overlap
   if (startDate && endDate) {
-    orConditions.push({
+    andConditions.push({
       startDate: { $lte: new Date(endDate) },
       endDate: { $gte: new Date(startDate) },
     });
@@ -111,25 +120,15 @@ export const matchTravelPlans = async (query: any, decoded: JwtPayload) => {
 
   // Match travel type
   if (travelType) {
-    orConditions.push({
-      travelType: { $regex: `^${travelType}$`, $options: "i" },
+    andConditions.push({
+      travelType: travelType.toUpperCase(),
     });
   }
 
-  // ✅ Final filter
-  const filter: any = {
-    isActive: true,
-    user: { $ne: decoded.userId }, // exclude own plans
-  };
+  console.log("FINAL MATCH FILTER 👉", { $and: andConditions });
 
-  if (orConditions.length > 0) {
-    filter.$or = orConditions;
-  }
-
-  console.log("FINAL MATCH FILTER 👉", filter);
-
-  return TravelPlan.find(filter)
-    .populate("user", "name email image bio")
+  return TravelPlan.find({ $and: andConditions })
+    .populate("user", "name email picture bio")
     .sort({ startDate: 1 });
 };
 

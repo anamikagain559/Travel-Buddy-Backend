@@ -35,7 +35,11 @@ const travelPlanSchema = new Schema(
     },
     isPublic: {
       type: Boolean,
-      default: true, // visible for matchmaking
+      default: true,
+    },
+    image: {
+      type: String, // ✅ new field
+      maxlength: 500,
     },
   },
   { timestamps: true }

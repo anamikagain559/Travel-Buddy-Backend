@@ -36,7 +36,11 @@ const travelPlanSchema = new mongoose_1.Schema({
     },
     isPublic: {
         type: Boolean,
-        default: true, // visible for matchmaking
+        default: true,
+    },
+    image: {
+        type: String, // ✅ new field
+        maxlength: 500,
     },
 }, { timestamps: true });
 exports.TravelPlan = (0, mongoose_1.model)("TravelPlan", travelPlanSchema);

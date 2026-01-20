@@ -13,7 +13,6 @@ const user_interface_1 = require("../user/user.interface");
 const checkAuth = (...authRoles) => async (req, res, next) => {
     try {
         const accessToken = req.headers.authorization || req.cookies.accessToken;
-        console.log(accessToken);
         if (!accessToken) {
             throw new AppError_1.default(403, "No Token Recieved");
         }
@@ -28,8 +27,6 @@ const checkAuth = (...authRoles) => async (req, res, next) => {
         if (isUserExist.isDeleted) {
             throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, "User is deleted");
         }
-        console.log("verifiedToken", verifiedToken);
-        console.log(authRoles);
         if (!authRoles.includes(verifiedToken.role)) {
             throw new AppError_1.default(403, "You are not permitted to view this route!!!");
         }
@@ -37,7 +34,6 @@ const checkAuth = (...authRoles) => async (req, res, next) => {
         next();
     }
     catch (error) {
-        console.log("jwt error", error);
         next(error);
     }
 };

@@ -70,10 +70,10 @@ const updateTravelPlan = catchAsync(async (req, res) => {
 });
 
 const deleteTravelPlan = catchAsync(async (req, res) => {
-  await TravelPlanServices.deleteTravelPlan(
-    req.params.id,
-    req.user as JwtPayload
-  );
+await TravelPlanServices.deleteTravelPlan(
+  req.params.id,
+  req.user as JwtPayload & { userId: string; role: string }
+);
 
   sendResponse(res, {
     success: true,
@@ -82,7 +82,8 @@ const deleteTravelPlan = catchAsync(async (req, res) => {
     data: null,
   });
 });
-const matchTravelPlans = catchAsync(async (req, res) => {
+const matchTravelPlans = catchAsync(async (req: Request, res: Response) => {
+  // Build query from URL params
   const query = {
     destination: req.query.destination?.toString(),
     startDate: req.query.startDate?.toString(),
@@ -90,12 +91,14 @@ const matchTravelPlans = catchAsync(async (req, res) => {
     travelType: req.query.travelType?.toString(),
   };
 
+  // Call service method
   const result = await TravelPlanServices.matchTravelPlans(
     query,
-    req.user as JwtPayload
+    req.user as JwtPayload // make sure req.user is populated by your auth middleware
   );
 
-  sendResponse(res, {
+  // Return JSON response
+  return sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
     message: "Matching travel plans retrieved successfully",
